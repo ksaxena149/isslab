@@ -90,6 +90,37 @@ string encrypt_playfair(vector<vector<char>>& square, vector<pair<char, char>>& 
     return res;
 }
 
+string decrypt_playfair(vector<vector<char>>& square, vector<pair<char, char>>& digrams){
+    string res;
+    for(auto d: digrams){
+        pair<int, int> coords_first = get_char_coordinates(square, d.first);
+        pair<int, int> coords_second = get_char_coordinates(square, d.second);
+        if(coords_first.second == coords_second.second) { // both in same column
+            int row1 = (coords_first.first - 1 + 5) % 5;
+            int col1 = coords_first.second;
+            int row2 = (coords_second.first - 1 + 5) % 5;
+            int col2 = coords_second.second;
+            res.push_back(square[row1][col1]);
+            res.push_back(square[row2][col2]);
+        } else if (coords_first.first == coords_second.first) { // both in same row
+            int row1 = coords_first.first;
+            int col1 = (coords_first.second - 1 + 5) % 5;
+            int row2 = coords_second.first;
+            int col2 = (coords_second.second - 1 + 5) % 5;
+            res.push_back(square[row1][col1]);
+            res.push_back(square[row2][col2]);
+        } else { // rectangle swap
+            int row1 = coords_first.first;
+            int col1 = coords_second.second;
+            int row2 = coords_second.first;
+            int col2 = coords_first.second;
+            res.push_back(square[row1][col1]);
+            res.push_back(square[row2][col2]);
+        }
+    }
+    return res;
+}
+
 //playfair cipher
 int main(){
     string key, text;
@@ -108,5 +139,8 @@ int main(){
     digrams = get_digrams(text, 'Z');
     string res = encrypt_playfair(square, digrams);
     cout <<"Cipher Text: " << res << endl;
+    digrams = get_digrams(res, 'Z');
+    string og = decrypt_playfair(square,digrams);
+    cout<<"Decrypted Text: "<<og<<endl;
     return 0;
 }
