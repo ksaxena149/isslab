@@ -1,1 +1,7 @@
-.vscode
+*
+
+# Except .gitignore itself
+!.gitignore
+
+# Except .cpp files
+!*.cpp
